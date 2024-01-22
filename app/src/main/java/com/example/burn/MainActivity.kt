@@ -107,8 +107,7 @@ class MainActivity : Activity(), SensorEventListener {
         // Optionally, show a message to indicate that the run is complete
         messageTextView.text = "Run Completed"
 
-        // Allow the user to start another run
-        runButton.isEnabled = true
+
     }
 
     private fun startRunning() {
@@ -128,8 +127,7 @@ class MainActivity : Activity(), SensorEventListener {
         runButton.text = "Stop Running"
         isRunning = true
 
-        // Disable the button to prevent starting another run while one is in progress
-        runButton.isEnabled = false
+
     }
 
     private fun calculateMaxHeartRate(age: Int): Int {
