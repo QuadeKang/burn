@@ -29,7 +29,7 @@ class MainActivity : Activity(), SensorEventListener {
     private var maxHeartRate: Int = 0
     private var currentPhase: Int = 0
     private val phases = arrayOf("Warm-up", "Running", "Rest", "Running", "Rest", "Running", "Rest")
-    private val phaseDurations = intArrayOf(10, 10, 10, 10, 10, 10, 10)
+    private val phaseDurations = intArrayOf(5, 5, 5, 5, 5, 5, 5)
     private val targetHeartRates = arrayOf(0.5, 0.85, 0.65, 0.85, 0.65, 0.85, 0.65)
     private var heartRate: Int = 0
     private val handler = Handler(Looper.getMainLooper())
@@ -103,12 +103,14 @@ class MainActivity : Activity(), SensorEventListener {
         // Change the button label and running state
         runButton.text = "Start Running"
         isRunning = false
-
+        handler.removeCallbacksAndMessages(null)
         // Optionally, show a message to indicate that the run is complete
         messageTextView.text = "Run Completed"
 
         // Allow the user to start another run
         runButton.isEnabled = true
+        currentPhase = 0
+
     }
 
     private fun startRunning() {
@@ -137,6 +139,7 @@ class MainActivity : Activity(), SensorEventListener {
     }
 
     private fun runPhase(phase: Int, startTimeMillis: Long) {
+
         if (phase < phases.size) {
             val targetRate = (maxHeartRate * targetHeartRates[phase]).toInt()
             Log.d("YourTag", "Target Rate: $targetRate BPM")
@@ -160,8 +163,16 @@ class MainActivity : Activity(), SensorEventListener {
             elapsedTimeTextView.text = "Elapsed Time: $elapsedTime ms"
 
             if (elapsedTime >= phaseDurationMillis) {
+
+
                 // 현재 단계의 시간이 다 지났으므로 다음 단계로 진행
                 val nextPhase = (phase + 1)
+                Log.d("nextPhase", "Next Phase: $nextPhase")
+                if (nextPhase == 7) {
+                    stopRunning()
+                    Log.d("stopRunning", "aaaa")
+                    return
+                }
                 val targetRate = (maxHeartRate * targetHeartRates[nextPhase]).toInt()
                 Log.d("YourTag", "Next Phase: $nextPhase, Target Rate: $targetRate BPM")
                 targetHeartRateTextView.text = "Target Heart Rate: $targetRate BPM"
