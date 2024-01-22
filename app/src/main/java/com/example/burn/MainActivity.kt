@@ -97,24 +97,39 @@ class MainActivity : Activity(), SensorEventListener {
         // Handle accuracy changes if needed
     }
 
+    private fun stopRunning() {
+        // Add logic to stop the running phase if needed
+
+        // Change the button label and running state
+        runButton.text = "Start Running"
+        isRunning = false
+
+        // Optionally, show a message to indicate that the run is complete
+        messageTextView.text = "Run Completed"
+
+        // Allow the user to start another run
+        runButton.isEnabled = true
+    }
+
     private fun startRunning() {
+        // Add logic to prepare for a new run, if needed
+
         age = 30 // You should implement age input logic
         maxHeartRate = calculateMaxHeartRate(age)
         currentPhase = 0
         val targetRate = (maxHeartRate * targetHeartRates[currentPhase]).toInt()
         targetHeartRateTextView.text = "Target Heart Rate: $targetRate BPM"
-        val curruntTime = System.currentTimeMillis()
-        runPhase(currentPhase, curruntTime)
-        runButton.text = "Stop Running" // 버튼 레이블 변경
-        isRunning = true // 달리기 중 상태로 설정
-    }
 
-    private fun stopRunning() {
-        // 달리기를 멈추는 동작 추가 (필요한 로직 추가)
-        // 예를 들어, 현재 단계 실행을 중지하고 버튼 레이블을 다시 "Start Running"으로 설정
-        handler.removeCallbacksAndMessages(null) // 핸들러에서 예약된 작업 모두 제거
-        runButton.text = "Start Running" // 버튼 레이블 변경
-        isRunning = false // 달리기 종료 상태로 설정
+        // Start the running phase
+        val currentTime = System.currentTimeMillis()
+        runPhase(currentPhase, currentTime)
+
+        // Change the button label and running state
+        runButton.text = "Stop Running"
+        isRunning = true
+
+        // Disable the button to prevent starting another run while one is in progress
+        runButton.isEnabled = false
     }
 
     private fun calculateMaxHeartRate(age: Int): Int {
