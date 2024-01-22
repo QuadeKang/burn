@@ -33,6 +33,7 @@ class MainActivity : Activity(), SensorEventListener {
     private val targetHeartRates = arrayOf(0.5, 0.85, 0.65, 0.85, 0.65, 0.85, 0.65)
     private var heartRate: Int = 0
     private val handler = Handler(Looper.getMainLooper())
+    private var isRunning = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +53,11 @@ class MainActivity : Activity(), SensorEventListener {
         }
 
         runButton.setOnClickListener {
-            startRunning()
+            if (isRunning) {
+                stopRunning()
+            } else {
+                startRunning()
+            }
         }
     }
 
@@ -93,7 +98,6 @@ class MainActivity : Activity(), SensorEventListener {
     }
 
     private fun startRunning() {
-
         age = 30 // You should implement age input logic
         maxHeartRate = calculateMaxHeartRate(age)
         currentPhase = 0
@@ -101,6 +105,16 @@ class MainActivity : Activity(), SensorEventListener {
         targetHeartRateTextView.text = "Target Heart Rate: $targetRate BPM"
         val curruntTime = System.currentTimeMillis()
         runPhase(currentPhase, curruntTime)
+        runButton.text = "Stop Running" // 버튼 레이블 변경
+        isRunning = true // 달리기 중 상태로 설정
+    }
+
+    private fun stopRunning() {
+        // 달리기를 멈추는 동작 추가 (필요한 로직 추가)
+        // 예를 들어, 현재 단계 실행을 중지하고 버튼 레이블을 다시 "Start Running"으로 설정
+        handler.removeCallbacksAndMessages(null) // 핸들러에서 예약된 작업 모두 제거
+        runButton.text = "Start Running" // 버튼 레이블 변경
+        isRunning = false // 달리기 종료 상태로 설정
     }
 
     private fun calculateMaxHeartRate(age: Int): Int {
@@ -148,6 +162,11 @@ class MainActivity : Activity(), SensorEventListener {
                     Log.d("YourTag", "Delayed Phase: $phase")
                     runPhase(phase, startTimeMillis) // 현재 단계 시작 시간을 그대로 유지
                 }, 1000L)
+            }
+
+            if (phase == phases.size - 1 && elapsedTime >= phaseDurationMillis) {
+                // 달리기가 모든 단계를 완료했을 때
+                stopRunning()
             }
         }
     }
