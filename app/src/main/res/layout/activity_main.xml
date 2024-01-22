@@ -1,46 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp"
     tools:context="com.example.burn.MainActivity">
 
-    <TextView
-        android:id="@+id/heartRateTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Heart Rate: "
-        android:textSize="24sp"
-        android:textColor="@android:color/black" /> <!-- Add text color here -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
+                  android:orientation="vertical">
+        <TextView
+                android:id="@+id/heartRateTextView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Heart Rate: "
+                android:textSize="24sp"
+                android:layout_marginTop="30dp"
+        /> <!-- Add text color here -->
 
-    <!-- Add a TextView for displaying messages -->
-    <TextView
-        android:id="@+id/messageTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:textSize="18sp"
-        android:textColor="@android:color/red" /> <!-- You can customize the text color here -->
-
-    <!-- Add a TextView for displaying target heart rate -->
-    <TextView
-        android:id="@+id/targetHeartRateTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:textSize="18sp"
+        <!-- Add a TextView for displaying messages -->
+        <TextView
+                android:id="@+id/messageTextView"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:text=""
+                android:textSize="18sp"
         /> <!-- You can customize the text color here -->
 
-    <!-- Add a Button for running -->
-    <Button
-        android:id="@+id/runButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Start Running" />
+        <TextView
+                android:id="@+id/currentTimeTextView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Current Time: "
+                android:textSize="18sp"
+                android:layout_marginTop="20dp"
+        />
 
-    <!-- Add any additional UI elements as needed, such as age input field, etc. -->
+        <!-- Add a TextView for displaying elapsedTime -->
+        <TextView
+                android:id="@+id/elapsedTimeTextView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Elapsed Time: "
+                android:textSize="18sp"
+                android:layout_marginTop="20dp"
+        />
 
-</LinearLayout>
+        <!-- Add a TextView for displaying target heart rate -->
+        <TextView
+                android:id="@+id/targetHeartRateTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="18sp"
+        /> <!-- You can customize the text color here -->
+
+        <!-- Add a Button for running -->
+        <Button
+                android:id="@+id/runButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Start Running" />
+
+        <!-- Add any additional UI elements as needed, such as age input field, etc. -->
+
+
+    </LinearLayout>
+
+
+
+
+</ScrollView>
