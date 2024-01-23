@@ -1,91 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
-
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
-    tools:context="com.example.burn.MainActivity"
-    android:id="@+id/scrollView">
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-    <ImageView
-        android:id="@+id/gifTextureView"
+<FrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="fitXY"
-        android:src="@raw/runbackground" />
+        tools:context="com.example.burn.MainActivity">
 
-        <LinearLayout
+    <!-- ImageView를 사용하여 이미지를 화면에 꽉 차게 표시 -->
+    <ImageView
+            android:id="@+id/gifTextureView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:scaleType="centerCrop"
+            android:src="@raw/runbackground"
+            android:adjustViewBounds="true"/>
 
+    <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <!-- 나머지 UI 요소들을 RelativeLayout로 감싸줌 -->
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:orientation="vertical">
+
+            <!-- 나머지 UI 요소들을 배치 -->
             <!-- 1. Phase Status -->
             <TextView
-                android:id="@+id/phaseStatusTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="NO RUNNING"
-                android:textSize="24sp"
-                android:layout_marginTop="30dp" />
+                    android:id="@+id/phaseStatusTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="NO RUNNING"
+                    android:textSize="24sp"
+                    android:layout_marginTop="30dp" />
 
             <!-- 2. Remaining Time -->
             <TextView
-                android:id="@+id/remainingTimeTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Remaining Time: 10 min"
-                android:textSize="18sp" />
+                    android:id="@+id/remainingTimeTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Remaining Time: 10 min"
+                    android:textSize="18sp" />
 
             <!-- 3. Custom Progress Bar -->
             <com.example.burn.CustomProgressBar
-                android:id="@+id/customProgressBar"
-                android:layout_width="match_parent"
-                android:layout_height="20dp"
-                android:layout_marginTop="10dp"
-                android:background="#CCCCCC" />
+                    android:id="@+id/customProgressBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="10dp"
+                    android:background="#CCCCCC" />
 
             <!-- 4. Heart Rate -->
             <TextView
-                android:id="@+id/heartRateTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Heart Rate: "
-                android:textSize="24sp"
-                android:layout_marginTop="20dp" />
+                    android:id="@+id/heartRateTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Heart Rate: "
+                    android:textSize="24sp"
+                    android:layout_marginTop="20dp" />
 
             <!-- 5. Start Running Button -->
             <Button
-                android:id="@+id/runButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Start Running" />
+                    android:id="@+id/runButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Start Running" />
 
             <TextView
-                android:id="@+id/targetHeartRateTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:textSize="18sp"
-                />
+                    android:id="@+id/targetHeartRateTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="18sp"
+            />
 
             <TextView
-                android:id="@+id/messageTextView"
-                android:layout_width="200dp"
-                android:layout_height="50dp"
-                android:text=""
-                android:textSize="18sp"
-                />
-
+                    android:id="@+id/messageTextView"
+                    android:layout_width="200dp"
+                    android:layout_height="50dp"
+                    android:text=""
+                    android:textSize="18sp"
+            />
         </LinearLayout>
-    </RelativeLayout>
-</ScrollView>
+    </ScrollView>
+</FrameLayout>

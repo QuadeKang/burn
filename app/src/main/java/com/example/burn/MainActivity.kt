@@ -22,7 +22,6 @@ import android.widget.ImageView
 import com.bumptech.glide.Glide
 
 
-
 class MainActivity : Activity(), SensorEventListener {
     private lateinit var binding: ActivityMainBinding
     private lateinit var sensorManager: SensorManager
@@ -45,7 +44,6 @@ class MainActivity : Activity(), SensorEventListener {
     private lateinit var customProgressBar: CustomProgressBar
     private val musicProbability = 0.05
     private val runningTime = 480
-    private lateinit var gifTextureView: ImageView
     private val gifHandler = Handler()
     private lateinit var scrollViewBackground: ImageView
 
@@ -60,7 +58,6 @@ class MainActivity : Activity(), SensorEventListener {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        gifTextureView = findViewById(R.id.gifTextureView)
 
 
 
@@ -100,6 +97,7 @@ class MainActivity : Activity(), SensorEventListener {
 
     private fun loadAndLoopGif() {
         Glide.with(this)
+                .asGif()
             .load(R.raw.runbackground) // Replace with your GIF resource
             .into(scrollViewBackground)
     }
