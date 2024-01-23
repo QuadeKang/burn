@@ -13,14 +13,16 @@
     tools:context="com.example.burn.MainActivity"
     android:id="@+id/scrollView">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
     <ImageView
         android:id="@+id/gifTextureView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitXY"
-        android:src="@drawable/runbackground"
-    />
-
+        android:src="@raw/runbackground" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -85,4 +87,5 @@
                 />
 
         </LinearLayout>
+    </RelativeLayout>
 </ScrollView>

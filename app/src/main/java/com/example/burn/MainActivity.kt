@@ -100,7 +100,7 @@ class MainActivity : Activity(), SensorEventListener {
 
     private fun loadAndLoopGif() {
         Glide.with(this)
-            .load(R.drawable.runbackground) // Replace with your GIF resource
+            .load(R.raw.runbackground) // Replace with your GIF resource
             .into(scrollViewBackground)
     }
 
