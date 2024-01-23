@@ -43,7 +43,8 @@ class MainActivity : Activity(), SensorEventListener {
     private var isRunning = false
     private lateinit var customProgressBar: CustomProgressBar
     private val musicProbability = 0.05
-    private val runningTime = 480
+//    private val runningTime = 480
+    private val runningTime = 35
     private val gifHandler = Handler()
     private lateinit var scrollViewBackground: ImageView
 
@@ -58,9 +59,6 @@ class MainActivity : Activity(), SensorEventListener {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-
-
 
 
         heartRateTextView = binding.heartRateTextView
@@ -134,7 +132,7 @@ class MainActivity : Activity(), SensorEventListener {
         if (event.sensor.type == Sensor.TYPE_HEART_RATE) {
             heartRate = event.values[0].toInt()
             heartRateTextView.text = "Heart Rate: $heartRate BPM"
-            updateTargetHeartRate(heartRate)
+//            updateTargetHeartRate(heartRate)
             customProgressBar.setProgress(heartRate)  // Update custom progress bar
         }
     }
@@ -228,7 +226,7 @@ class MainActivity : Activity(), SensorEventListener {
             runButton.isEnabled = false
 
             // Start the running phase after progress animation
-            runPhase(currentPhase, System.currentTimeMillis())
+            runPhase(currentPhase, currentTime)
         }
     }
 
@@ -237,65 +235,64 @@ class MainActivity : Activity(), SensorEventListener {
     }
 
     private fun runPhase(phase: Int, startTimeMillis: Long) {
+        if (phase >= phases.size) {
+            // All phases are completed, exit the function
+            phaseStateView.text = "NO RUNNING"
+            stopRunning()
+            return
+        }
 
-        if (phase < phases.size) {
+        currentPhase = phase
 
-            val targetRate = (maxHeartRate * targetHeartRates[phase]).toInt()
-            Log.d("YourTag", "Target Rate: $targetRate BPM")
+        val targetRate = (maxHeartRate * targetHeartRates[phase]).toInt()
+        Log.d("YourTag", "Target Rate: $targetRate BPM")
+        targetHeartRateTextView.text = "Target Heart Rate: $targetRate BPM"
+        updateTargetHeartRate(targetRate)
 
-            // Inside the updateTargetHeartRate function
-            if (heartRate < targetRate * 0.9) {
-                messageTextView.text = "Run faster!"
+        // Inside the updateTargetHeartRate function
+        if (heartRate < targetRate * 0.9) {
+            messageTextView.text = "Run faster!"
 
-                // Check if music should be played
-                if (Random.nextDouble(0.0, 1.0) <= musicProbability) {
-                    // Play music here
-                    playMusic()
-                }
-            } else if (heartRate > targetRate * 1.1) {
-                messageTextView.text = "Slow down!"
-            } else {
-                messageTextView.text = ""
+            // Check if music should be played
+            if (Random.nextDouble(0.0, 1.0) <= musicProbability) {
+                // Play music here
+                playMusic()
             }
+        } else if (heartRate > targetRate * 1.1) {
+            messageTextView.text = "Slow down!"
+        } else {
+            messageTextView.text = ""
+        }
 
-            val currentTimeMillis = System.currentTimeMillis()
-            val elapsedTime = currentTimeMillis - startTimeMillis
-            val phaseDurationMillis = phaseDurations[phase] * 1000L
+        val currentTimeMillis = System.currentTimeMillis()
+        val elapsedTime = currentTimeMillis - startTimeMillis
+        val phaseDurationMillis = phaseDurations[phase] * 1000L
 
-            if (elapsedTime >= phaseDurationMillis) {
+        if (elapsedTime >= phaseDurationMillis) {
+            // Current phase time has elapsed, proceed to the next phase
+            val nextPhase = phase + 1
+            Log.d("nextPhase", "Next Phase: $nextPhase")
 
-                // 현재 단계의 시간이 다 지났으므로 다음 단계로 진행
-                val nextPhase = (phase + 1)
-                Log.d("nextPhase", "Next Phase: $nextPhase")
-                if (nextPhase == 7) {
-                    stopRunning()
-                    Log.d("stopRunning", "aaaa")
-                    return
-                }
-                val targetRate = (maxHeartRate * targetHeartRates[nextPhase]).toInt()
-                Log.d("YourTag", "Next Phase: $nextPhase, Target Rate: $targetRate BPM")
-                targetHeartRateTextView.text = "Target Heart Rate: $targetRate BPM"
-
-                // 다음 페이즈로 넘어갈 때 현재 페이즈가 중복으로 호출되지 않도록 수정
-                if (nextPhase != phase) {
-                    phaseStateView.text = "Phase : ${phases[nextPhase]}"
-                    runPhase(nextPhase, System.currentTimeMillis())
-                }
-            } else {
-                // 아직 단계의 시간이 다 지나지 않았으므로 기다립니다.
-                // 예를 들어, 다음 확인을 1초마다 하도록 설정할 수 있습니다.
-                handler.postDelayed({
-                    Log.d("YourTag", "Delayed Phase: $phase")
-                    runPhase(phase, startTimeMillis) // 현재 단계 시작 시간을 그대로 유지
-                }, 1000L)
-            }
-
-            if (phase == phases.size - 1 && elapsedTime >= phaseDurationMillis) {
+            if (nextPhase >= phases.size) {
+                // All phases are completed, exit the function
                 phaseStateView.text = "NO RUNNING"
-
-                // 달리기가 모든 단계를 완료했을 때
                 stopRunning()
+                return
             }
+
+            val nextTargetRate = (maxHeartRate * targetHeartRates[nextPhase]).toInt()
+            Log.d("YourTag", "Next Phase: $nextPhase, Target Rate: $nextTargetRate BPM")
+            targetHeartRateTextView.text = "Target Heart Rate: $nextTargetRate BPM"
+
+            // Proceed to the next phase
+            phaseStateView.text = "Phase : ${phases[nextPhase]}"
+            runPhase(nextPhase, System.currentTimeMillis())
+        } else {
+            // Phase time has not elapsed, wait and continue checking
+            handler.postDelayed({
+                Log.d("YourTag", "Delayed Phase: $phase")
+                runPhase(phase, startTimeMillis) // Continue with the current phase
+            }, 1000L)
         }
     }
 }
