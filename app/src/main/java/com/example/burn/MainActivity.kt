@@ -15,6 +15,13 @@ import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.burn.databinding.ActivityMainBinding
+import android.media.MediaPlayer
+import kotlin.random.Random
+import android.view.View
+import android.widget.ImageView
+import com.bumptech.glide.Glide
+
+
 
 class MainActivity : Activity(), SensorEventListener {
     private lateinit var binding: ActivityMainBinding
@@ -25,6 +32,7 @@ class MainActivity : Activity(), SensorEventListener {
     private lateinit var runButton: Button
     private lateinit var targetHeartRateTextView: TextView
     private lateinit var messageTextView: TextView
+    private lateinit var phaseStateView: TextView
     private var age: Int = 0
     private var maxHeartRate: Int = 0
     private var currentPhase: Int = 0
@@ -34,19 +42,43 @@ class MainActivity : Activity(), SensorEventListener {
     private var heartRate: Int = 0
     private val handler = Handler(Looper.getMainLooper())
     private var isRunning = false
+    private lateinit var customProgressBar: CustomProgressBar
+    private val musicProbability = 0.05
+    private val runningTime = 480
+    private lateinit var gifTextureView: ImageView
+    private val gifHandler = Handler()
+    private lateinit var scrollViewBackground: ImageView
+
+    // Declare MediaPlayer variable
+    private var mediaPlayer: MediaPlayer? = null
+
+    // List of music resource IDs
+    private val musicFiles = listOf(R.raw.run1, R.raw.run2, R.raw.run3, R.raw.run4)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        gifTextureView = findViewById(R.id.gifTextureView)
+
+
+
+
 
         heartRateTextView = binding.heartRateTextView
         targetHeartRateTextView = binding.targetHeartRateTextView
         runButton = binding.runButton
         messageTextView = binding.messageTextView
+        customProgressBar = binding.customProgressBar  // Reference to the custom progress bar
+        phaseStateView = binding.phaseStatusTextView
 
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         heartRateSensor = sensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE)
+        scrollViewBackground = findViewById(R.id.gifTextureView)
+
+
+        mediaPlayer = MediaPlayer.create(this, R.raw.run1)
 
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.BODY_SENSORS) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.BODY_SENSORS), PERMISSION_REQUEST_CODE)
@@ -59,7 +91,36 @@ class MainActivity : Activity(), SensorEventListener {
                 startRunning()
             }
         }
+
+        loadAndLoopGif()
+
+        // Start the initial GIF loop
+        startGifLoop()
     }
+
+    private fun loadAndLoopGif() {
+        Glide.with(this)
+            .load(R.drawable.runbackground) // Replace with your GIF resource
+            .into(scrollViewBackground)
+    }
+
+    private fun startGifLoop() {
+        gifHandler.postDelayed(object : Runnable {
+            override fun run() {
+                // Restart the GIF animation
+                scrollViewBackground.visibility = View.GONE
+                scrollViewBackground.visibility = View.VISIBLE
+                gifHandler.postDelayed(this, 3000) // Restart the GIF every 3 seconds
+            }
+        }, 3000)
+    }
+
+    override fun onDestroy() {
+        // Remove the GIF looping callback when the activity is destroyed
+        gifHandler.removeCallbacksAndMessages(null)
+        super.onDestroy()
+    }
+
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         if (requestCode == PERMISSION_REQUEST_CODE) {
@@ -76,13 +137,13 @@ class MainActivity : Activity(), SensorEventListener {
             heartRate = event.values[0].toInt()
             heartRateTextView.text = "Heart Rate: $heartRate BPM"
             updateTargetHeartRate(heartRate)
+            customProgressBar.setProgress(heartRate)  // Update custom progress bar
         }
     }
 
     private fun updateTargetHeartRate(heartRate: Int) {
         val targetRate = (maxHeartRate * targetHeartRates[currentPhase]).toInt()
 
-//        targetHeartRateTextView.text = "Target Heart Rate: $targetRate BPM"
         Log.d("updateTargetHeartRate", "Target Rate: $targetRate BPM")
         if (heartRate < targetRate * 0.9) {
             messageTextView.text = "Run faster!"
@@ -95,6 +156,30 @@ class MainActivity : Activity(), SensorEventListener {
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
         // Handle accuracy changes if needed
+    }
+
+    private fun playMusic() {
+        // Stop any currently playing music
+        stopMusic()
+
+        // Randomly select a music file from the list
+        val randomIndex = Random.nextInt(musicFiles.size)
+        val musicResource = musicFiles[randomIndex]
+
+        // Initialize the MediaPlayer with the selected music file
+        mediaPlayer = MediaPlayer.create(this, musicResource)
+        mediaPlayer?.isLooping = false // Set looping if needed
+
+        // Start playing the selected music
+        mediaPlayer?.start()
+    }
+
+
+    // Function to stop music (if needed)
+    private fun stopMusic() {
+        mediaPlayer?.stop()
+        mediaPlayer?.release()
+        mediaPlayer = null
     }
 
     private fun stopRunning() {
@@ -110,7 +195,7 @@ class MainActivity : Activity(), SensorEventListener {
         // Allow the user to start another run
         runButton.isEnabled = true
         currentPhase = 0
-
+        customProgressBar.resetProgress()  // Reset custom progress bar
     }
 
     private fun startRunning() {
@@ -124,7 +209,6 @@ class MainActivity : Activity(), SensorEventListener {
 
         // Start the running phase
         val currentTime = System.currentTimeMillis()
-        runPhase(currentPhase, currentTime)
 
         // Change the button label and running state
         runButton.text = "Stop Running"
@@ -132,6 +216,22 @@ class MainActivity : Activity(), SensorEventListener {
 
         // Disable the button to prevent starting another run while one is in progress
         runButton.isEnabled = false
+
+        customProgressBar.setMaxProgress(runningTime)
+
+        // Animate the progress bar
+        customProgressBar.animateProgress(runningTime) {
+            // This callback is called when the animation is complete
+            // Change the button label and running state
+            runButton.text = "Stop Running"
+            isRunning = true
+
+            // Disable the button to prevent starting another run while one is in progress
+            runButton.isEnabled = false
+
+            // Start the running phase after progress animation
+            runPhase(currentPhase, System.currentTimeMillis())
+        }
     }
 
     private fun calculateMaxHeartRate(age: Int): Int {
@@ -141,11 +241,19 @@ class MainActivity : Activity(), SensorEventListener {
     private fun runPhase(phase: Int, startTimeMillis: Long) {
 
         if (phase < phases.size) {
+
             val targetRate = (maxHeartRate * targetHeartRates[phase]).toInt()
             Log.d("YourTag", "Target Rate: $targetRate BPM")
 
+            // Inside the updateTargetHeartRate function
             if (heartRate < targetRate * 0.9) {
                 messageTextView.text = "Run faster!"
+
+                // Check if music should be played
+                if (Random.nextDouble(0.0, 1.0) <= musicProbability) {
+                    // Play music here
+                    playMusic()
+                }
             } else if (heartRate > targetRate * 1.1) {
                 messageTextView.text = "Slow down!"
             } else {
@@ -156,14 +264,7 @@ class MainActivity : Activity(), SensorEventListener {
             val elapsedTime = currentTimeMillis - startTimeMillis
             val phaseDurationMillis = phaseDurations[phase] * 1000L
 
-            val currentTimeTextView = findViewById<TextView>(R.id.currentTimeTextView)
-            val elapsedTimeTextView = findViewById<TextView>(R.id.elapsedTimeTextView)
-
-            currentTimeTextView.text = "Current Time: $currentTimeMillis"
-            elapsedTimeTextView.text = "Elapsed Time: $elapsedTime ms"
-
             if (elapsedTime >= phaseDurationMillis) {
-
 
                 // 현재 단계의 시간이 다 지났으므로 다음 단계로 진행
                 val nextPhase = (phase + 1)
@@ -179,6 +280,7 @@ class MainActivity : Activity(), SensorEventListener {
 
                 // 다음 페이즈로 넘어갈 때 현재 페이즈가 중복으로 호출되지 않도록 수정
                 if (nextPhase != phase) {
+                    phaseStateView.text = "Phase : ${phases[nextPhase]}"
                     runPhase(nextPhase, System.currentTimeMillis())
                 }
             } else {
@@ -191,11 +293,11 @@ class MainActivity : Activity(), SensorEventListener {
             }
 
             if (phase == phases.size - 1 && elapsedTime >= phaseDurationMillis) {
+                phaseStateView.text = "NO RUNNING"
+
                 // 달리기가 모든 단계를 완료했을 때
                 stopRunning()
             }
         }
     }
-
-
 }

@@ -1,74 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    tools:context="com.example.burn.MainActivity">
+    tools:context="com.example.burn.MainActivity"
+    android:id="@+id/scrollView">
 
-    <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
-                  android:orientation="vertical">
-        <TextView
-                android:id="@+id/heartRateTextView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Heart Rate: "
-                android:textSize="24sp"
-                android:layout_marginTop="30dp"
-        /> <!-- Add text color here -->
+    <ImageView
+        android:id="@+id/gifTextureView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/runbackground"
+    />
 
-        <!-- Add a TextView for displaying messages -->
-        <TextView
-                android:id="@+id/messageTextView"
-                android:layout_width="200dp"
-                android:layout_height="50dp"
-                android:text=""
-                android:textSize="18sp"
-        /> <!-- You can customize the text color here -->
 
-        <TextView
-                android:id="@+id/currentTimeTextView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Current Time: "
-                android:textSize="18sp"
-                android:layout_marginTop="20dp"
-        />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <!-- Add a TextView for displaying elapsedTime -->
-        <TextView
-                android:id="@+id/elapsedTimeTextView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Elapsed Time: "
-                android:textSize="18sp"
-                android:layout_marginTop="20dp"
-        />
-
-        <!-- Add a TextView for displaying target heart rate -->
-        <TextView
-                android:id="@+id/targetHeartRateTextView"
+            <!-- 1. Phase Status -->
+            <TextView
+                android:id="@+id/phaseStatusTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=""
-                android:textSize="18sp"
-        /> <!-- You can customize the text color here -->
+                android:text="NO RUNNING"
+                android:textSize="24sp"
+                android:layout_marginTop="30dp" />
 
-        <!-- Add a Button for running -->
-        <Button
+            <!-- 2. Remaining Time -->
+            <TextView
+                android:id="@+id/remainingTimeTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Remaining Time: 10 min"
+                android:textSize="18sp" />
+
+            <!-- 3. Custom Progress Bar -->
+            <com.example.burn.CustomProgressBar
+                android:id="@+id/customProgressBar"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_marginTop="10dp"
+                android:background="#CCCCCC" />
+
+            <!-- 4. Heart Rate -->
+            <TextView
+                android:id="@+id/heartRateTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Heart Rate: "
+                android:textSize="24sp"
+                android:layout_marginTop="20dp" />
+
+            <!-- 5. Start Running Button -->
+            <Button
                 android:id="@+id/runButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Start Running" />
 
-        <!-- Add any additional UI elements as needed, such as age input field, etc. -->
+            <TextView
+                android:id="@+id/targetHeartRateTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="18sp"
+                />
 
+            <TextView
+                android:id="@+id/messageTextView"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:text=""
+                android:textSize="18sp"
+                />
 
-    </LinearLayout>
-
-
-
-
+        </LinearLayout>
 </ScrollView>
